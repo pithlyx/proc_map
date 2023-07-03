@@ -1,0 +1,4 @@
+.venv/
+Pipfile.lock
+saves.json
+test.py
