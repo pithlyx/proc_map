@@ -24,6 +24,20 @@ Stygian Depths is a text-based game where the player navigates a grid of tiles a
 8. To reset the grid to its initial state, press the Backspace key.
 9. Enjoy exploring the grid, interacting with tiles, and experimenting with different game options.
 
+## Tile Key
+
+The following table lists the tile types and their symbols used in Stygian Depths:
+
+|      Type      | Default | Can Interact |
+| :------------: | :-----: | :----------: |
+| Does Not Exist |   `▨`   |   `False`    |
+|     Empty      |   `🞑`   |   `False`    |
+|      Wall      |   `◼`   |   `False`    |
+|     Shrine     |   `🞔`   |     `🞖`      |
+|      User      |   `🞚`   |     `🞛`      |
+
+
+
 ## Hotkeys
 
 The following table lists the hotkeys used in Stygian Depths:

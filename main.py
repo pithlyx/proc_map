@@ -1,13 +1,7 @@
-import colorama
-import readchar
-import random
-from src.controller import Controller
 from src.direction import Direction
 from src.utils import get_random_string
-
-
-colorama.init()
-
+from src.controller import Controller
+import readchar
 
 def menu(cont):
     """Handle user input and game interaction."""
@@ -17,7 +11,7 @@ def menu(cont):
         Direction.SOUTH: ['\x1b[B', '^[[B', '\x1bOB', '^[[2~', 's'],
         Direction.EAST: ['\x1b[C', '^[[C', '\x1bOC', '^[[4~', 'd']
     }
-    
+
     hotkeys = {
         'import': ['i'],
         'export': ['o'],
@@ -26,10 +20,10 @@ def menu(cont):
         'gen_down': ['[', '-'],
         'gen_up': [']','='],
         'interact': ['e', ' '],
-        
-    
+
+
     }
-        
+
 
     for direction in direction_mapping:
         if direction is not None:
@@ -40,19 +34,22 @@ def menu(cont):
     print(direction_mapping)
 
     while True:
+        print('▬ '*(cont.viewport*2)+'▬')
         cont.display_grid(cont.x, cont.y)
-        print(f'Current node: {cont.current_node.node_id}')
 
         key = readchar.readkey()
-        direction = None
-        for dir_key, mappings in direction_mapping.items():
-            if key in mappings:
-                direction = dir_key
-                break
-
+        direction = next(
+            (
+                dir_key
+                for dir_key, mappings in direction_mapping.items()
+                if key in mappings
+            ),
+            None,
+        )
         if key in hotkeys['reset']:  # Reset grid
-            cont.__init__(cont.viewport, cont.gen_range, cont.grid.seed)
-            print("Grid reset to initial state.")
+            new_seed = get_random_string(8)
+            cont.__init__(cont.viewport, cont.gen_range, new_seed)
+            print(f"Grid reset with the new seed: {new_seed}.")
             continue
 
         elif key in hotkeys['gen_down']:  # Reduce generation range
@@ -100,13 +97,16 @@ def menu(cont):
             else:
                 print("You don't have any bombs left.")
 
-        elif key in hotkeys['interact']: # Interact with node
-            if not cont.current_node.can_interact:
-                continue
-            elif cont.current_node.node_type == 'shrine':
-                print(cont.current_node.interact())
-                bomb_count = random.randint(1, 3)
-                cont.bombs += bomb_count
+        elif key in hotkeys['interact']: # Interact with tile
+            try:
+                if not cont.current_tile.can_interact:
+                    continue
+                elif cont.current_tile.tile_type == 'shrine':
+                    print(cont.current_tile.interact())
+                    cont.bombs += 1 if cont.bombs < 5 else 0
+
+            except Exception as e:
+                print(e)
 
 
         elif direction is None:
@@ -117,6 +117,7 @@ def menu(cont):
             cont.move(direction)
         except Exception as e:
             print(e)
+
 
 if __name__ == '__main__':
     seed = input("Enter the global seed: ") or get_random_string(8)
